@@ -94,13 +94,17 @@ def _calc_duty_0_3(invoice_eur: Decimal, engine_cc: int) -> tuple[Decimal, str]:
             by_percent = invoice_eur * pct
             by_volume = cc * eur_cc
             duty = max(by_percent, by_volume)
-            method = f"max({pct * 100}% = {by_percent} €, {eur_cc} €/см³ = {by_volume} €)"
+            pct_display = int(pct * 100)
+            by_pct_r = by_percent.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            method = f"max({pct_display}% = {by_pct_r} €, {eur_cc} €/см³ = {by_volume} €)"
             return duty, method
     last = DUTY_0_3[-1]
     by_percent = invoice_eur * last[1]
     by_volume = cc * last[2]
     duty = max(by_percent, by_volume)
-    method = f"max({last[1] * 100}% = {by_percent} €, {last[2]} €/см³ = {by_volume} €)"
+    pct_display = int(last[1] * 100)
+    by_pct_r = by_percent.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    method = f"max({pct_display}% = {by_pct_r} €, {last[2]} €/см³ = {by_volume} €)"
     return duty, method
 
 
