@@ -180,12 +180,17 @@ async def handle_vtb_rate_input(update: Update, context) -> int:
 
     # Send calculation breakdown
     calc_text = format_calculation(result, cbr["date"])
-    await update.message.reply_text(calc_text)
+    await update.message.reply_text(
+        calc_text,
+        parse_mode=ParseMode.HTML,
+    )
 
     # Send ready post
     post_text = format_telegram_post(result, car.display_name)
     await update.message.reply_text(
-        "=== ГОТОВЫЙ POST В TELEGRAM ===\n\n" + post_text,
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "📝  <b>ГОТОВЫЙ ПОСТ ДЛЯ TELEGRAM</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" + post_text,
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
     )

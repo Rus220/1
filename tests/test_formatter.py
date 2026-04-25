@@ -2,7 +2,7 @@
 
 from decimal import Decimal
 
-from formatter import _fmt, format_calculation, format_telegram_post
+from formatter import _fmt, _fmt_rub, format_calculation, format_telegram_post
 
 
 class TestFmt:
@@ -17,6 +17,17 @@ class TestFmt:
 
     def test_small(self):
         assert _fmt(Decimal("45.12")) == "45.12"
+
+
+class TestFmtRub:
+    def test_truncates_kopecks(self):
+        assert _fmt_rub(Decimal("1561248.39")) == "1 561 248"
+
+    def test_truncates_not_rounds(self):
+        assert _fmt_rub(Decimal("1999999.99")) == "1 999 999"
+
+    def test_whole_number(self):
+        assert _fmt_rub(Decimal("230000")) == "230 000"
 
 
 class TestFormatCalculation:
@@ -55,6 +66,7 @@ class TestFormatCalculation:
         assert "ПРОЧЕЕ" in text
         assert "ПОД КЛЮЧ" in text
         assert "предварительный" in text
+        assert "2 287 044" in text  # grand total without kopecks
 
 
 class TestFormatTelegramPost:
@@ -66,7 +78,7 @@ class TestFormatTelegramPost:
             "hp": Decimal("150"),
             "year": 2024,
             "engine_type": "ДВС",
-            "grand_total": Decimal("2287044"),
+            "grand_total": Decimal("2287044.55"),
         }
         post = format_telegram_post(calc, "Chery Tiggo 8 Pro")
         assert "Chery Tiggo 8 Pro" in post
@@ -75,3 +87,5 @@ class TestFormatTelegramPost:
         assert "+79612475867" in post
         assert "zakazRUSTEAMBOT" in post
         assert "под ключ в Казань" in post
+        assert "wa.me/79612475867" in post
+        assert "2 287 044 ₽" in post  # no kopecks
