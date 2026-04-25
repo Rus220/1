@@ -125,14 +125,13 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
 
         "─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─\n\n"
 
-        f"💎 <b>БЕСПЛАТНЫЙ РАСЧЁТ ЦЕНЫ</b> — "
-        f"<a href=\"https://t.me/{bot_username}\">напишите нам</a>\n\n"
+        f"💎 <a href=\"https://t.me/{bot_username}\"><b>БЕСПЛАТНЫЙ РАСЧЁТ ЦЕНЫ</b></a>\n\n"
 
         f"Хотите бесплатный расчёт именно вашего\n"
         f"автомобиля — напишите нам! 👇\n\n"
 
         f"📱 Telegram: @vivat116\n"
-        f"💬 <a href=\"https://wa.me/79612475867\">WhatsApp</a>\n"
+        f"💬 WA <a href=\"https://wa.me/79612475867\">79612475867</a>\n"
         f"☎️ Телефон: +79612475867"
     )
     return post
