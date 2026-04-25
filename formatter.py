@@ -1,5 +1,6 @@
 """Format calculation results and generate Telegram posts."""
 
+import html
 from decimal import Decimal, ROUND_DOWN
 
 
@@ -70,11 +71,11 @@ def format_calculation(calc: dict, cbr_date: str) -> str:
 
         f"     Инвойс в EUR:  {_fmt(c['invoice_eur'])} €\n"
         f"     Пошлина:  {_fmt(c['duty_eur'])} € = <b>{_fmt(c['duty_rub'])} ₽</b>\n"
-        f"     <i>({c['duty_method']})</i>\n"
+        f"     <i>({html.escape(c['duty_method'])})</i>\n"
         f"     Оформление:  {_fmt(c['processing_fee'], 0)} ₽\n"
-        f"     <i>({c['processing_info']})</i>\n"
+        f"     <i>({html.escape(c['processing_info'])})</i>\n"
         f"     Утильсбор:  {_fmt(c['util_fee'], 0)} ₽\n"
-        f"     <i>({c['util_info']})</i>\n"
+        f"     <i>({html.escape(c['util_info'])})</i>\n"
         f"     Таможня итого:  <b>{_fmt(c['customs_total'])} ₽</b>\n\n"
 
         "📦  <b>ПРОЧЕЕ</b>\n\n"
