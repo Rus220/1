@@ -185,12 +185,19 @@ async def handle_vtb_rate_input(update: Update, context) -> int:
         parse_mode=ParseMode.HTML,
     )
 
-    # Send ready post
-    post_text = format_telegram_post(result, car.display_name)
+    # Send header as separate message
     await update.message.reply_text(
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
         "📝  <b>ГОТОВЫЙ ПОСТ ДЛЯ TELEGRAM</b>\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n" + post_text,
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "👇 Скопируйте следующее сообщение целиком:",
+        parse_mode=ParseMode.HTML,
+    )
+
+    # Send ready post as a clean separate message for easy copy
+    post_text = format_telegram_post(result, car.display_name)
+    await update.message.reply_text(
+        post_text,
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=True,
     )
