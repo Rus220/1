@@ -206,7 +206,14 @@ def _extract_brand_model(text: str) -> tuple[str, str, str]:
     # Clean brand and model from trailing garbage
     brand = re.sub(r'[\-\—\–,;!?:]+$', '', brand).strip()
     model = re.sub(r'[\-\—\–,;!?:]+$', '', model).strip()
-    # Remove single stray characters at the end (e.g. "Lamando— в" -> "Lamando")
+    # Remove common trailing phrases (e.g. "— в продаже", "в наличии", etc.)
+    model = re.sub(
+        r'[\s\-\—\–]*(в\s+продаже|в\s+наличии|на\s+продажу|в\s+наличие|'
+        r'на\s+заказ|под\s+заказ|в\s+пути|в\s+stock)\s*$',
+        '', model, flags=re.IGNORECASE,
+    ).strip()
+    # Remove trailing dashes and single stray characters
+    model = re.sub(r'[\-\—\–,;!?:]+$', '', model).strip()
     model = re.sub(r'[\s\-\—\–]+[а-яА-Яa-zA-Z]$', '', model).strip()
 
     return brand, model, trim

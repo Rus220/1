@@ -87,6 +87,28 @@ class TestParser:
         assert car.display_name == "Volkswagen Lamando"
         assert car.mileage_km == 17567
 
+    def test_v_prodazhe_cleaned(self):
+        msg = """🔥 Volkswagen Lamando— в продаже
+2022 год
+1.4T (1400 см³)
+150 л.с.
+Пробег: 17567 км
+Цена: 90000 юаней"""
+        car = parse_car_message(msg)
+        assert car.brand == "Volkswagen"
+        assert car.model == "Lamando"
+        assert car.display_name == "Volkswagen Lamando"
+
+    def test_v_nalichii_cleaned(self):
+        msg = """BMW X5 — в наличии
+2022
+3.0T 2998 см³
+340 л.с.
+Цена: 350000 юаней"""
+        car = parse_car_message(msg)
+        assert car.brand == "BMW"
+        assert car.model == "X5"
+
     def test_emoji_prefix_audi(self):
         msg = """✨ Audi A6 2023
 2.0T 1984 см³
