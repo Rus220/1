@@ -72,3 +72,46 @@ class TestParser:
         assert car.hp > 0
         assert car.price_cny > 0
         assert car.is_complete_for_calc
+
+    def test_emoji_in_text_volkswagen(self):
+        msg = """🔥 Volkswagen Lamando— в
+2022 год
+1.4T (1400 см³)
+150 л.с.
+Бензин
+Пробег: 17567 км
+Цена: 90000 юаней"""
+        car = parse_car_message(msg)
+        assert car.brand == "Volkswagen"
+        assert car.model == "Lamando"
+        assert car.display_name == "Volkswagen Lamando"
+        assert car.mileage_km == 17567
+
+    def test_emoji_prefix_audi(self):
+        msg = """✨ Audi A6 2023
+2.0T 1984 см³
+245 л.с.
+Цена: 200000 юаней"""
+        car = parse_car_message(msg)
+        assert car.brand == "Audi"
+        assert "A6" in car.model
+
+    def test_bmw_brand(self):
+        msg = """BMW X5 xDrive40i
+2022
+3.0T 2998 см³
+340 л.с.
+Цена: 350000 юаней"""
+        car = parse_car_message(msg)
+        assert car.brand == "BMW"
+        assert "X5" in car.model
+
+    def test_unknown_brand_with_emoji_cleaned(self):
+        msg = """🔥🚘 SomeRare ModelZ
+2024
+1500 см³
+150 л.с.
+Цена: 100000 юаней"""
+        car = parse_car_message(msg)
+        assert "🔥" not in car.brand
+        assert "🚘" not in car.brand

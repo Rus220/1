@@ -123,6 +123,26 @@ def _extract_engine_type(text: str) -> str:
     return "ДВС"
 
 
+def _clean_text(text: str) -> str:
+    """Remove emojis and special decorative characters from text."""
+    emoji_pattern = re.compile(
+        r'[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF\U0001F680-\U0001F6FF'
+        r'\U0001F1E0-\U0001F1FF\U00002700-\U000027BF\U0000FE00-\U0000FE0F'
+        r'\U0001F900-\U0001F9FF\U0001FA00-\U0001FA6F\U0001FA70-\U0001FAFF'
+        r'\U00002702-\U000027B0\U000024C2-\U0001F251\U00002600-\U000026FF'
+        r'\U0000200D\U0000231A-\U0000231B\U000023E9-\U000023F3\U000023F8-\U000023FA'
+        r'\U000025AA-\U000025AB\U000025B6\U000025C0\U000025FB-\U000025FE'
+        r'\U00002614-\U00002615\U00002648-\U00002653\U0000267F\U00002934-\U00002935'
+        r'\U000023CF\U0000203C\U00002049\U00002122\U00002139\U00002194-\U000021AA'
+        r'\U00002328\U000023ED-\U000023EF\U00002934-\U00002935\U000025AA-\U000025FE'
+        r'\U00002B05-\U00002B07\U00002B1B-\U00002B1C\U00002B50\U00002B55'
+        r'\U00003030\U0000303D\U00003297\U00003299'
+        r'\U0000FE0F\U000020E3\U0000200D]+',
+        re.UNICODE,
+    )
+    return emoji_pattern.sub('', text).strip()
+
+
 def _extract_brand_model(text: str) -> tuple[str, str, str]:
     known_brands = [
         "Chery", "Haval", "Geely", "BYD", "Changan", "Exeed", "Omoda",
@@ -131,6 +151,12 @@ def _extract_brand_model(text: str) -> tuple[str, str, str]:
         "Lixiang", "Voyah", "Avatr", "Deepal", "Leapmotor", "Wuling",
         "MG", "Lynk", "Lynk & Co", "GAC", "Trumpchi", "Kaiyi",
         "SWM", "Forthing", "AITO", "Denza", "iCAR",
+        "Volkswagen", "VW", "Audi", "BMW", "Mercedes", "Toyota", "Honda",
+        "Hyundai", "Kia", "Nissan", "Mazda", "Lexus", "Porsche",
+        "Land Rover", "Volvo", "Skoda", "Ford", "Chevrolet", "Cadillac",
+        "Infiniti", "Mitsubishi", "Subaru", "Suzuki", "Peugeot", "Renault",
+        "Citroen", "Opel", "Fiat", "Tesla", "Mini", "Jeep", "Dodge",
+        "Lincoln", "Buick", "Genesis", "Smart",
     ]
     known_models: dict[str, list[str]] = {
         "Chery": ["Tiggo 4", "Tiggo 4 Pro", "Tiggo 7", "Tiggo 7 Pro", "Tiggo 7 Pro Max",
@@ -162,18 +188,26 @@ def _extract_brand_model(text: str) -> tuple[str, str, str]:
                         model = mdl
                         break
             if not model:
-                pattern = r'\b' + re.escape(b) + r'\s+(\S+(?:\s+\S+){0,3})'
-                m = re.search(pattern, text, re.IGNORECASE)
-                if m:
-                    model = m.group(1).strip().rstrip(".,;!?")
+                # Extract model from same line only, up to 3 words after brand
+                for line in text.split("\n"):
+                    bm = re.search(r'\b' + re.escape(b) + r'\s+(\S+(?:\s+\S+){0,3})', line, re.IGNORECASE)
+                    if bm:
+                        model = bm.group(1).strip().rstrip(".,;!?")
+                        break
             break
 
-    first_line = text.strip().split("\n")[0].strip()
+    first_line = _clean_text(text.strip().split("\n")[0].strip())
     if not brand and len(first_line) < 100:
         parts = first_line.split()
         if len(parts) >= 2:
             brand = parts[0]
             model = " ".join(parts[1:4])
+
+    # Clean brand and model from trailing garbage
+    brand = re.sub(r'[\-\—\–,;!?:]+$', '', brand).strip()
+    model = re.sub(r'[\-\—\–,;!?:]+$', '', model).strip()
+    # Remove single stray characters at the end (e.g. "Lamando— в" -> "Lamando")
+    model = re.sub(r'[\s\-\—\–]+[а-яА-Яa-zA-Z]$', '', model).strip()
 
     return brand, model, trim
 
