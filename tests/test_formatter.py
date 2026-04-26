@@ -92,6 +92,16 @@ class TestFormatTelegramPost:
         assert "под ключ в Казань" in post
         assert "wa.me/79612475867" in post
         assert "2 287 044 ₽" in post  # no kopecks
+        assert "#RUSTEAMAUTO" in post
+        # Title has price + city
+        assert "за 2 287 044 ₽ под ключ в Казань" in post
+        # BPSV paragraph with facts
+        assert "первый владелец" in post
+        assert "экспертиз" in post.lower()
+        # No banned phrases
+        assert "Выгодно и надёжно" not in post
+        assert "Отличный выбор" not in post
+        assert "✨" not in post
 
     def test_hashtag_chery(self):
         calc = {
@@ -101,7 +111,7 @@ class TestFormatTelegramPost:
             "mileage_km": 10000, "brand": "Chery",
         }
         post = format_telegram_post(calc, "Chery Tiggo 8 Pro")
-        assert post.endswith("#CHERY")
+        assert post.endswith("#CHERY #RUSTEAMAUTO")
 
     def test_hashtag_bmw(self):
         calc = {
@@ -111,7 +121,7 @@ class TestFormatTelegramPost:
             "mileage_km": 30000, "brand": "BMW",
         }
         post = format_telegram_post(calc, "BMW X5")
-        assert post.endswith("#BMW")
+        assert post.endswith("#BMW #RUSTEAMAUTO")
 
     def test_hashtag_haval(self):
         calc = {
@@ -121,7 +131,7 @@ class TestFormatTelegramPost:
             "mileage_km": 5000, "brand": "Haval",
         }
         post = format_telegram_post(calc, "Haval H6")
-        assert post.endswith("#HAVAL")
+        assert post.endswith("#HAVAL #RUSTEAMAUTO")
 
     def test_hashtag_geely(self):
         calc = {
@@ -131,7 +141,7 @@ class TestFormatTelegramPost:
             "mileage_km": 0, "brand": "Geely",
         }
         post = format_telegram_post(calc, "Geely Monjaro")
-        assert post.endswith("#GEELY")
+        assert post.endswith("#GEELY #RUSTEAMAUTO")
 
     def test_no_hashtag_when_no_brand(self):
         calc = {
@@ -141,4 +151,4 @@ class TestFormatTelegramPost:
             "mileage_km": 0, "brand": "",
         }
         post = format_telegram_post(calc, "Unknown Car")
-        assert "#" not in post
+        assert "#RUSTEAMAUTO" in post

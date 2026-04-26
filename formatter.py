@@ -97,22 +97,37 @@ def format_calculation(calc: dict, cbr_date: str) -> str:
 
 
 def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRUSTEAMBOT") -> str:
-    """Generate a ready-to-publish Telegram channel post — premium styled."""
+    """Generate a ready-to-publish Telegram channel post — БПСВ styled."""
     c = calc
     grand_total = _fmt_rub(c['grand_total'])
+    mileage = int(c.get('mileage_km', 0))
+    year = c['year']
+
+    # Title: brand + price + city (hooks through benefit)
+    title = f"<b>{car_name} за {grand_total} ₽ под ключ в Казань</b>"
+
+    # БПСВ paragraph: concrete facts, no fluff
+    bpsv_parts = []
+    if mileage > 0:
+        bpsv_parts.append(f"Пробег {_fmt(Decimal(mileage), 0)} км, {year} год.")
+    else:
+        bpsv_parts.append(f"{year} год.")
+    bpsv_parts.append(
+        "Оформляем на физлицо — вы первый владелец в РФ. "
+        "Экспертиза до оплаты, договор до первого платежа."
+    )
+    bpsv = " ".join(bpsv_parts)
 
     post = (
-        f"✨🚘 <b>{car_name}</b>\n"
-        f"Выгодно и надёжно из Китая!\n\n"
+        f"{title}\n\n"
 
-        f"Отличный выбор для тех, кто хочет современный\n"
-        f"автомобиль с богатым оснащением по лучшей цене.\n\n"
+        f"{bpsv}\n\n"
 
         f"▫️ <b>Модель:</b>  {car_name}\n"
-        f"▫️ <b>Год выпуска:</b>  {c['year']}\n"
+        f"▫️ <b>Год выпуска:</b>  {year}\n"
         f"▫️ <b>Объём двигателя:</b>  {c['engine_cc']} см³\n"
         f"▫️ <b>Мощность:</b>  {_fmt(c['hp'], 0)} л.с.\n"
-        f"▫️ <b>Пробег:</b>  {_fmt(Decimal(c.get('mileage_km', 0)), 0)} км\n"
+        f"▫️ <b>Пробег:</b>  {_fmt(Decimal(mileage), 0)} км\n"
         f"▫️ <b>Двигатель:</b>  {c['engine_type']}\n\n"
 
         "─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─\n\n"
@@ -139,6 +154,8 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
 
     brand = c.get("brand", "")
     if brand:
-        post += f"\n\n#{brand.upper()}"
+        post += f"\n\n#{brand.upper()} #RUSTEAMAUTO"
+    else:
+        post += "\n\n#RUSTEAMAUTO"
 
     return post
