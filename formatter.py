@@ -185,9 +185,9 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
     # БПСВ paragraph: concrete facts, random phrase
     bpsv_phrase = random.choice(BPSV_PHRASES)
     if mileage > 0:
-        bpsv = f"Пробег {_fmt(Decimal(mileage), 0)} км, {year} год. <b>{bpsv_phrase}</b>"
+        bpsv = f"Пробег {_fmt(Decimal(mileage), 0)} км, {year} год.\n<b>{bpsv_phrase}</b>"
     else:
-        bpsv = f"{year} год. <b>{bpsv_phrase}</b>"
+        bpsv = f"{year} год.\n<b>{bpsv_phrase}</b>"
 
     post = (
         f"{title}\n\n"
