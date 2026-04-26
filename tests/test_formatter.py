@@ -94,9 +94,8 @@ class TestFormatTelegramPost:
         assert "2 287 044 ₽" in post  # no kopecks
         # Title has price + city
         assert "за 2 287 044 ₽ под ключ в Казань" in post
-        # BPSV paragraph with facts
-        assert "первый владелец" in post
-        assert "экспертиз" in post.lower()
+        # BPSV paragraph exists (bold, random phrase)
+        assert "<b>" in post  # BPSV phrase is bold
         # Delivery to any city
         assert "любой город" in post.lower()
         # No banned phrases
