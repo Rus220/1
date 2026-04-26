@@ -136,4 +136,9 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
         f"💬 WA <a href=\"https://wa.me/79612475867\">79612475867</a>\n"
         f"☎️ Телефон: +79612475867"
     )
+
+    brand = c.get("brand", "")
+    if brand:
+        post += f"\n\n#{brand.upper()}"
+
     return post

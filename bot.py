@@ -225,6 +225,7 @@ async def handle_vtb_rate_input(update: Update, context) -> int:
 
     result["car_name"] = car.display_name
     result["mileage_km"] = car.mileage_km
+    result["brand"] = car.brand
 
     # Send calculation breakdown
     calc_text = format_calculation(result, cbr["date"])
