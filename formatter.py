@@ -133,7 +133,8 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
         "─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─\n\n"
 
         f"🏎 Автомобиль в наличии.\n"
-        f"Полный цикл доставки и оформления под ключ.\n\n"
+        f"Полный цикл доставки и оформления под ключ\n"
+        f"в любой город России.\n\n"
 
         f"💰 <b>Стоимость под ключ в Казань:</b>\n"
         f"🔥 <b>{grand_total} ₽</b>\n\n"
@@ -154,8 +155,6 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
 
     brand = c.get("brand", "")
     if brand:
-        post += f"\n\n#{brand.upper()} #RUSTEAMAUTO"
-    else:
-        post += "\n\n#RUSTEAMAUTO"
+        post += f"\n\n#{brand.upper()}"
 
     return post
