@@ -53,6 +53,7 @@ def format_calculation(calc: dict, cbr_date: str) -> str:
         f"📅 Возраст:  {c['year']} г. → категория <b>{c['age_category']}</b>\n"
         f"⚙️ Объём:  {c['engine_cc']} см³\n"
         f"🐎 Мощность:  {_fmt(c['hp'], 0)} л.с.\n"
+        f"🚩 Пробег:  {_fmt(Decimal(c.get('mileage_km', 0)), 0)} км\n"
         f"🔧 Двигатель:  {c['engine_type']}\n\n"
 
         "┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n"
@@ -111,6 +112,7 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
         f"▫️ <b>Год выпуска:</b>  {c['year']}\n"
         f"▫️ <b>Объём двигателя:</b>  {c['engine_cc']} см³\n"
         f"▫️ <b>Мощность:</b>  {_fmt(c['hp'], 0)} л.с.\n"
+        f"▫️ <b>Пробег:</b>  {_fmt(Decimal(c.get('mileage_km', 0)), 0)} км\n"
         f"▫️ <b>Двигатель:</b>  {c['engine_type']}\n\n"
 
         "─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─\n\n"

@@ -15,11 +15,16 @@ class CarInfo:
     hp: Decimal = Decimal("0")
     engine_type: str = "ДВС"
     price_cny: Decimal = Decimal("0")
+    mileage_km: int = 0
     raw_text: str = ""
 
     @property
     def has_hp(self) -> bool:
         return self.hp > 0
+
+    @property
+    def has_mileage(self) -> bool:
+        return self.mileage_km > 0
 
     @property
     def is_complete_for_calc(self) -> bool:
@@ -173,6 +178,24 @@ def _extract_brand_model(text: str) -> tuple[str, str, str]:
     return brand, model, trim
 
 
+def _extract_mileage(text: str) -> int:
+    """Extract mileage in km from text."""
+    patterns = [
+        r'(\d[\d\s]*)\s*(?:км|km|\u043a\u0438\u043b\u043e\u043c\u0435\u0442\u0440)',
+        r'(?:\u043f\u0440\u043e\u0431\u0435\u0433|mileage)[:\s]*(\d[\d\s]*)',
+    ]
+    for pat in patterns:
+        m = re.search(pat, text, re.IGNORECASE)
+        if m:
+            try:
+                val = int(m.group(1).replace(' ', '').replace('\u00a0', ''))
+                if val > 0:
+                    return val
+            except ValueError:
+                continue
+    return 0
+
+
 def parse_car_message(text: str) -> CarInfo:
     """Parse a forwarded supplier message and extract car information."""
     brand, model, trim = _extract_brand_model(text)
@@ -185,5 +208,6 @@ def parse_car_message(text: str) -> CarInfo:
         hp=_extract_hp(text),
         engine_type=_extract_engine_type(text),
         price_cny=_extract_price_cny(text),
+        mileage_km=_extract_mileage(text),
         raw_text=text,
     )

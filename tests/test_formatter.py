@@ -58,6 +58,7 @@ class TestFormatCalculation:
             "broker": Decimal("97000"),
             "commission": Decimal("100000"),
             "grand_total": Decimal("2287044"),
+            "mileage_km": 45000,
         }
         text = format_calculation(calc, "25.04.2026")
         assert "РАСЧЁТ СТОИМОСТИ" in text
@@ -67,6 +68,7 @@ class TestFormatCalculation:
         assert "ПОД КЛЮЧ" in text
         assert "предварительный" in text
         assert "2 287 044" in text  # grand total without kopecks
+        assert "45 000" in text  # mileage
 
 
 class TestFormatTelegramPost:
@@ -79,6 +81,7 @@ class TestFormatTelegramPost:
             "year": 2024,
             "engine_type": "ДВС",
             "grand_total": Decimal("2287044.55"),
+            "mileage_km": 45000,
         }
         post = format_telegram_post(calc, "Chery Tiggo 8 Pro")
         assert "Chery Tiggo 8 Pro" in post

@@ -27,8 +27,9 @@ logger = logging.getLogger(__name__)
 
 # Conversation states
 WAITING_HP = 1
-WAITING_VTB_RATE = 2
-CONFIRM_DATA = 3
+WAITING_MILEAGE = 2
+WAITING_VTB_RATE = 3
+CONFIRM_DATA = 4
 
 
 async def start(update: Update, context) -> None:
@@ -62,6 +63,7 @@ async def handle_car_message(update: Update, context) -> int:
         f"• Год: {car.year if car.year else 'не найден'}\n"
         f"• Объём: {car.engine_cc if car.engine_cc else 'не найден'} см³\n"
         f"• Мощность: {car.hp if car.hp > 0 else 'не найдена'} л.с.\n"
+        f"• Пробег: {str(car.mileage_km) + ' км' if car.has_mileage else 'не найден'}\n"
         f"• Тип двигателя: {car.engine_type}\n"
         f"• Цена: {car.price_cny if car.price_cny > 0 else 'не найдена'} CNY\n"
     )
@@ -89,6 +91,14 @@ async def handle_car_message(update: Update, context) -> int:
             "Укажите мощность в лошадиных силах (например: 150):"
         )
         return WAITING_HP
+
+    if not car.has_mileage:
+        await update.message.reply_text(
+            parsed_info + "\n"
+            "❓ Не найден пробег автомобиля.\n"
+            "Укажите пробег в км (например: 45000):"
+        )
+        return WAITING_MILEAGE
 
     await update.message.reply_text(
         parsed_info + "\n"
@@ -121,8 +131,45 @@ async def handle_hp_input(update: Update, context) -> int:
     car.hp = hp
     context.user_data["car"] = car
 
+    if not car.has_mileage:
+        await update.message.reply_text(
+            f"✅ Мощность: {hp} л.с.\n\n"
+            "❓ Укажите пробег автомобиля в км (например: 45000):"
+        )
+        return WAITING_MILEAGE
+
     await update.message.reply_text(
         f"✅ Мощность: {hp} л.с.\n\n"
+        "❓ Укажите курс покупки юаня ВТБ (например: 11.87):"
+    )
+    return WAITING_VTB_RATE
+
+
+async def handle_mileage_input(update: Update, context) -> int:
+    """Receive mileage from user."""
+    text = update.message.text.strip().replace(" ", "").replace("\u00a0", "")
+    import re
+    m = re.search(r'(\d+)', text)
+    if not m:
+        await update.message.reply_text("❌ Не могу распознать число. Укажите пробег в км (например: 45000):")
+        return WAITING_MILEAGE
+
+    try:
+        mileage = int(m.group(1))
+    except ValueError:
+        await update.message.reply_text("❌ Не могу распознать число. Укажите пробег в км (например: 45000):")
+        return WAITING_MILEAGE
+
+    if mileage < 0:
+        await update.message.reply_text("❌ Пробег не может быть отрицательным. Попробуйте ещё раз:")
+        return WAITING_MILEAGE
+
+    car: CarInfo = context.user_data["car"]
+    car.mileage_km = mileage
+    context.user_data["car"] = car
+
+    await update.message.reply_text(
+        f"✅ Пробег: {mileage} км\n\n"
         "❓ Укажите курс покупки юаня ВТБ (например: 11.87):"
     )
     return WAITING_VTB_RATE
@@ -177,6 +224,7 @@ async def handle_vtb_rate_input(update: Update, context) -> int:
         return ConversationHandler.END
 
     result["car_name"] = car.display_name
+    result["mileage_km"] = car.mileage_km
 
     # Send calculation breakdown
     calc_text = format_calculation(result, cbr["date"])
@@ -224,6 +272,9 @@ def main() -> None:
         states={
             WAITING_HP: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_hp_input),
+            ],
+            WAITING_MILEAGE: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_mileage_input),
             ],
             WAITING_VTB_RATE: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_vtb_rate_input),
