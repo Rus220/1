@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RUSTEAM AUTO | Импорт авто из Китая и Кореи</title>
+  <meta name="description" content="Импорт автомобилей из Китая и Кореи под ключ. Прозрачный расчёт, договор, видеоотчёты. RUSTEAM AUTO — ваш надёжный партнёр.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE (Mobile-First) ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #0a0e1a;
+      --bg-card: #111827;
+      --bg-glass: rgba(255, 255, 255, 0.04);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --chrome-1: #c0c0c0;
+      --chrome-2: #e8e8e8;
+      --chrome-3: #a0a0a0;
+      --gold-1: #d4a853;
+      --gold-2: #f0d080;
+      --gold-3: #b8912e;
+      --text-primary: #f0f0f5;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-blue: #3b82f6;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== STICKY HEADER ===== */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glass);
+      transition: background 0.3s ease;
+    }
+
+    .header-logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--chrome-2), var(--chrome-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-wa {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .header-wa:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+    }
+
+    .header-wa svg { width: 18px; height: 18px; fill: #fff; }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 20px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 20%, rgba(59, 130, 246, 0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 30% 70%, rgba(212, 168, 83, 0.05), transparent),
+        radial-gradient(ellipse 60% 40% at 70% 80%, rgba(59, 130, 246, 0.04), transparent);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 50px;
+      border: 1px solid var(--border-glass);
+      background: var(--bg-glass);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gold-1);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(42px, 10vw, 96px);
+      line-height: 1.05;
+      letter-spacing: -1px;
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #e0e0e0 20%,
+        #c0c0c0 40%,
+        #a8a8a8 60%,
+        #d0d0d0 80%,
+        #ffffff 100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.1));
+      margin-bottom: 16px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+
+    .hero-title::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.15) 45%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0.15) 55%,
+        transparent 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: chrome-shine 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes chrome-shine {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+    }
+
+    .hero-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: clamp(14px, 3vw, 22px);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero-sub .silver {
+      background: linear-gradient(135deg, var(--chrome-1), var(--chrome-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub .gold {
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub .divider {
+      color: var(--text-muted);
+      margin: 0 8px;
+      -webkit-text-fill-color: initial;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 380px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-2), var(--gold-1));
+      background-size: 200% 200%;
+      color: #1a1a2e;
+      box-shadow: 0 4px 24px rgba(212, 168, 83, 0.3);
+      animation: gold-shimmer 3s ease infinite;
+    }
+
+    @keyframes gold-shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(212, 168, 83, 0.5);
+    }
+
+    .btn-chrome {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-primary);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-chrome:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+      width: 100%;
+      max-width: 500px;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(24px, 5vw, 36px);
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ===== SECTION COMMON ===== */
+    .section {
+      padding: 80px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 50px;
+      border: 1px solid var(--border-glass);
+      background: var(--bg-glass);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold-1);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--text-primary), var(--chrome-1));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 16px;
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+
+    /* ===== LEAD MAGNET ===== */
+    .calc-section {
+      position: relative;
+    }
+
+    .calc-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-1), transparent);
+    }
+
+    .calc-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .calc-header h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .calc-header .timer {
+      color: var(--gold-1);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .calc-header p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-group input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--gold-1);
+      box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.1);
+    }
+
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239ca3af' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6.5 6.5 6.5-6.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+    }
+
+    .form-group select option {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .calc-btn {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .calc-trust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .calc-trust svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--gold-1);
+    }
+
+    /* ===== CASES (CARDS) ===== */
+    .cases-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .case-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .case-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 168, 83, 0.2);
+    }
+
+    .case-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .case-car-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .case-country {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .case-country.china {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .case-country.korea {
+      background: rgba(59, 130, 246, 0.1);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .case-country.germany {
+      background: rgba(234, 179, 8, 0.1);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.2);
+    }
+
+    .case-prices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .case-price-block {
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .case-price-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .case-price-value {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .case-price-value.old {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .case-price-value.new {
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .case-saving {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(34, 197, 94, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.15);
+    }
+
+    .case-saving-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .case-saving-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: #22c55e;
+    }
+
+    .case-saving-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4ade80;
+    }
+
+    .case-specs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .case-spec {
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ===== GUARANTEES ===== */
+    .guarantees-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .guarantee-card {
+      display: flex;
+      gap: 16px;
+      padding: 24px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s;
+    }
+
+    .guarantee-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .guarantee-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(212, 168, 83, 0.1), rgba(212, 168, 83, 0.05));
+      border: 1px solid rgba(212, 168, 83, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .guarantee-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--gold-1);
+    }
+
+    .guarantee-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .guarantee-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ===== WHY US ===== */
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .why-card {
+      padding: 24px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .why-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(212, 168, 83, 0.2);
+    }
+
+    .why-number {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 48px;
+      background: linear-gradient(135deg, rgba(212, 168, 83, 0.2), rgba(212, 168, 83, 0.05));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .why-card h3 {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .why-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* ===== CTA BOTTOM ===== */
+    .cta-bottom {
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .cta-bottom-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius);
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-bottom-inner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-1), transparent);
+    }
+
+    .cta-bottom h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(24px, 5vw, 36px);
+      margin-bottom: 12px;
+    }
+
+    .cta-bottom p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-bottom: 28px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      padding: 40px 20px;
+      border-top: 1px solid var(--border-glass);
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, var(--chrome-2), var(--chrome-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: var(--gold-1);
+    }
+
+    .footer-link svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+
+    .footer-channel {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 10px 20px;
+      border-radius: 50px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .footer-channel:hover {
+      background: rgba(59, 130, 246, 0.15);
+    }
+
+    .footer-channel svg {
+      width: 18px;
+      height: 18px;
+      fill: #60a5fa;
+    }
+
+    /* ===== FLOATING CTA ===== */
+    .floating-cta {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .floating-cta.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fab {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+    }
+
+    .fab-wa {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+    }
+
+    .fab-call {
+      background: linear-gradient(135deg, var(--gold-1), var(--gold-3));
+    }
+
+    .fab svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .animate-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .animate-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (min-width: 640px) {
+      .cases-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .guarantees-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .hero-cta {
+        flex-direction: row;
+      }
+      .cta-buttons {
+        flex-direction: row;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .cases-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .why-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .section {
+        padding: 100px 40px;
+      }
+    }
+
+    /* ===== SCROLL DIVIDERS ===== */
+    .divider-line {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-1), transparent);
+      margin: 0 auto 40px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STICKY HEADER -->
+  <header class="header" id="header">
+    <div class="header-logo">RUSTEAM</div>
+    <a href="https://wa.me/79612475867" class="header-wa" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <span class="hero-badge" id="heroBadge">Надёжный импорт с 2020 года</span>
+
+    <h1 class="hero-title" id="heroTitle">ИМПОРТ АВТО</h1>
+
+    <p class="hero-sub" id="heroSub">
+      <span class="silver">RUSTEAM AUTO</span>
+      <span class="divider">|</span>
+      <span class="gold">КИТАЙ, КОРЕЯ</span>
+    </p>
+
+    <div class="hero-cta" id="heroCta">
+      <a href="#calc" class="btn btn-gold">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm4 12H8v-1c0-1.33 2.67-2 4-2s4 .67 4 2v1z"/></svg>
+        Рассчитать стоимость
+      </a>
+      <a href="https://t.me/vivat116" class="btn btn-chrome" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        Telegram
+      </a>
+    </div>
+
+    <div class="hero-stats" id="heroStats">
+      <div class="stat">
+        <div class="stat-value">500+</div>
+        <div class="stat-label">Авто доставлено</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">30%</div>
+        <div class="stat-label">Экономия</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">14</div>
+        <div class="stat-label">Дней доставка</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEAD MAGNET: CALCULATOR -->
+  <section class="section calc-section" id="calc">
+    <div class="animate-in">
+      <div class="calc-card">
+        <div class="calc-header">
+          <h2>Узнайте стоимость за 15 минут</h2>
+          <div class="timer">&#9201; Бесплатный расчёт — без обязательств</div>
+          <p>Отправьте запрос — менеджер свяжется с вами и подготовит точный расчёт</p>
+        </div>
+        <form id="calcForm">
+          <div class="form-group">
+            <label for="brand">Марка и модель</label>
+            <input type="text" id="brand" name="brand" placeholder="Например: Zeekr 001, Li Auto L9" required>
+          </div>
+          <div class="form-group">
+            <label for="budget">Бюджет (руб.)</label>
+            <select id="budget" name="budget" required>
+              <option value="" disabled selected>Выберите диапазон</option>
+              <option value="до 2 000 000 ₽">до 2 000 000 &#8381;</option>
+              <option value="2 000 000 - 3 500 000 ₽">2 000 000 — 3 500 000 &#8381;</option>
+              <option value="3 500 000 - 5 000 000 ₽">3 500 000 — 5 000 000 &#8381;</option>
+              <option value="5 000 000 - 8 000 000 ₽">5 000 000 — 8 000 000 &#8381;</option>
+              <option value="от 8 000 000 ₽">от 8 000 000 &#8381;</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="phone">Телефон для связи</label>
+            <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required>
+          </div>
+          <button type="submit" class="btn btn-gold calc-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            Получить расчёт
+          </button>
+        </form>
+        <div class="calc-trust">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          Данные защищены и не передаются третьим лицам
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASES -->
+  <section class="section" id="cases">
+    <div class="animate-in">
+      <span class="section-label">Реальные кейсы</span>
+      <h2 class="section-title">Выгода наших клиентов</h2>
+      <p class="section-desc">Каждый автомобиль — это прозрачный расчёт, договор и полное сопровождение. Вот несколько свежих примеров.</p>
+    </div>
+    <div class="cases-grid">
+
+      <!-- Case 1 -->
+      <div class="case-card animate-in">
+        <div class="case-card-header">
+          <div class="case-car-name">Zeekr 001</div>
+          <span class="case-country china">Китай</span>
+        </div>
+        <div class="case-prices">
+          <div class="case-price-block">
+            <div class="case-price-label">В РФ у дилера</div>
+            <div class="case-price-value old">5 200 000 &#8381;</div>
+          </div>
+          <div class="case-price-block">
+            <div class="case-price-label">Через RUSTEAM</div>
+            <div class="case-price-value new">3 850 000 &#8381;</div>
+          </div>
+        </div>
+        <div class="case-saving">
+          <div class="case-saving-icon"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></div>
+          <span class="case-saving-text">Выгода: 1 350 000 &#8381;</span>
+        </div>
+        <div class="case-specs">
+          <span class="case-spec">100 kWh</span>
+          <span class="case-spec">544 л.с.</span>
+          <span class="case-spec">2024</span>
+        </div>
+      </div>
+
+      <!-- Case 2 -->
+      <div class="case-card animate-in">
+        <div class="case-card-header">
+          <div class="case-car-name">Li Auto L9</div>
+          <span class="case-country china">Китай</span>
+        </div>
+        <div class="case-prices">
+          <div class="case-price-block">
+            <div class="case-price-label">В РФ у дилера</div>
+            <div class="case-price-value old">7 800 000 &#8381;</div>
+          </div>
+          <div class="case-price-block">
+            <div class="case-price-label">Через RUSTEAM</div>
+            <div class="case-price-value new">5 900 000 &#8381;</div>
+          </div>
+        </div>
+        <div class="case-saving">
+          <div class="case-saving-icon"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></div>
+          <span class="case-saving-text">Выгода: 1 900 000 &#8381;</span>
+        </div>
+        <div class="case-specs">
+          <span class="case-spec">EREV</span>
+          <span class="case-spec">449 л.с.</span>
+          <span class="case-spec">2024</span>
+        </div>
+      </div>
+
+      <!-- Case 3 -->
+      <div class="case-card animate-in">
+        <div class="case-card-header">
+          <div class="case-car-name">Audi Q7</div>
+          <span class="case-country korea">Корея</span>
+        </div>
+        <div class="case-prices">
+          <div class="case-price-block">
+            <div class="case-price-label">В РФ у дилера</div>
+            <div class="case-price-value old">8 500 000 &#8381;</div>
+          </div>
+          <div class="case-price-block">
+            <div class="case-price-label">Через RUSTEAM</div>
+            <div class="case-price-value new">6 200 000 &#8381;</div>
+          </div>
+        </div>
+        <div class="case-saving">
+          <div class="case-saving-icon"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></div>
+          <span class="case-saving-text">Выгода: 2 300 000 &#8381;</span>
+        </div>
+        <div class="case-specs">
+          <span class="case-spec">3.0 TFSI</span>
+          <span class="case-spec">340 л.с.</span>
+          <span class="case-spec">2023</span>
+        </div>
+      </div>
+
+      <!-- Case 4 -->
+      <div class="case-card animate-in">
+        <div class="case-card-header">
+          <div class="case-car-name">BMW X5</div>
+          <span class="case-country korea">Корея</span>
+        </div>
+        <div class="case-prices">
+          <div class="case-price-block">
+            <div class="case-price-label">В РФ у дилера</div>
+            <div class="case-price-value old">9 200 000 &#8381;</div>
+          </div>
+          <div class="case-price-block">
+            <div class="case-price-label">Через RUSTEAM</div>
+            <div class="case-price-value new">6 800 000 &#8381;</div>
+          </div>
+        </div>
+        <div class="case-saving">
+          <div class="case-saving-icon"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></div>
+          <span class="case-saving-text">Выгода: 2 400 000 &#8381;</span>
+        </div>
+        <div class="case-specs">
+          <span class="case-spec">3.0d</span>
+          <span class="case-spec">340 л.с.</span>
+          <span class="case-spec">2024</span>
+        </div>
+      </div>
+
+      <!-- Case 5 -->
+      <div class="case-card animate-in">
+        <div class="case-card-header">
+          <div class="case-car-name">BYD Seal</div>
+          <span class="case-country china">Китай</span>
+        </div>
+        <div class="case-prices">
+          <div class="case-price-block">
+            <div class="case-price-label">В РФ у дилера</div>
+            <div class="case-price-value old">3 900 000 &#8381;</div>
+          </div>
+          <div class="case-price-block">
+            <div class="case-price-label">Через RUSTEAM</div>
+            <div class="case-price-value new">2 750 000 &#8381;</div>
+          </div>
+        </div>
+        <div class="case-saving">
+          <div class="case-saving-icon"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></div>
+          <span class="case-saving-text">Выгода: 1 150 000 &#8381;</span>
+        </div>
+        <div class="case-specs">
+          <span class="case-spec">82.5 kWh</span>
+          <span class="case-spec">530 л.с.</span>
+          <span class="case-spec">2024</span>
+        </div>
+      </div>
+
+      <!-- Case 6 -->
+      <div class="case-card animate-in">
+        <div class="case-card-header">
+          <div class="case-car-name">Genesis GV80</div>
+          <span class="case-country korea">Корея</span>
+        </div>
+        <div class="case-prices">
+          <div class="case-price-block">
+            <div class="case-price-label">В РФ у дилера</div>
+            <div class="case-price-value old">7 100 000 &#8381;</div>
+          </div>
+          <div class="case-price-block">
+            <div class="case-price-label">Через RUSTEAM</div>
+            <div class="case-price-value new">5 300 000 &#8381;</div>
+          </div>
+        </div>
+        <div class="case-saving">
+          <div class="case-saving-icon"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></div>
+          <span class="case-saving-text">Выгода: 1 800 000 &#8381;</span>
+        </div>
+        <div class="case-specs">
+          <span class="case-spec">3.5 V6</span>
+          <span class="case-spec">380 л.с.</span>
+          <span class="case-spec">2024</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="section" id="why">
+    <div class="animate-in">
+      <span class="section-label">Как мы работаем</span>
+      <h2 class="section-title">4 шага к вашему авто</h2>
+      <p class="section-desc">Простой и прозрачный процесс от заявки до ключей в руках.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card animate-in">
+        <div class="why-number">01</div>
+        <h3>Заявка и расчёт</h3>
+        <p>Вы оставляете заявку — мы готовим детальный расчёт за 15 минут с учётом всех расходов.</p>
+      </div>
+      <div class="why-card animate-in">
+        <div class="why-number">02</div>
+        <h3>Договор и оплата</h3>
+        <p>Заключаем официальный договор. Фиксируем цену в рублях. Работаем по предоплате 30%.</p>
+      </div>
+      <div class="why-card animate-in">
+        <div class="why-number">03</div>
+        <h3>Покупка и доставка</h3>
+        <p>Покупаем авто, проводим проверку, отправляем видеоотчёт. Доставка 10-14 дней.</p>
+      </div>
+      <div class="why-card animate-in">
+        <div class="why-number">04</div>
+        <h3>Получение авто</h3>
+        <p>Полная растаможка, оформление СБКТС и ПТС. Вы получаете авто готовым к регистрации.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUARANTEES -->
+  <section class="section" id="guarantees">
+    <div class="animate-in">
+      <span class="section-label">Гарантии</span>
+      <h2 class="section-title">Безопасность вашей сделки</h2>
+      <p class="section-desc">Мы понимаем, что покупка авто из-за границы — это ответственный шаг. Поэтому даём максимум гарантий.</p>
+    </div>
+    <div class="guarantees-grid">
+      <div class="guarantee-card animate-in">
+        <div class="guarantee-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-title">Официальный договор</div>
+          <div class="guarantee-text">Работаем строго по договору с полным описанием условий, сроков и ответственности сторон.</div>
+        </div>
+      </div>
+      <div class="guarantee-card animate-in">
+        <div class="guarantee-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-title">Видеоотчёты</div>
+          <div class="guarantee-text">Снимаем видео на каждом этапе: осмотр, покупка, погрузка, прибытие. Полная прозрачность.</div>
+        </div>
+      </div>
+      <div class="guarantee-card animate-in">
+        <div class="guarantee-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-title">Прозрачность расчётов</div>
+          <div class="guarantee-text">Каждый рубль расписан: инвойс, пошлина, логистика, оформление. Никаких скрытых доплат.</div>
+        </div>
+      </div>
+      <div class="guarantee-card animate-in">
+        <div class="guarantee-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-title">Возврат средств</div>
+          <div class="guarantee-text">Если авто не соответствует описанию — полный возврат предоплаты. Это прописано в договоре.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BOTTOM -->
+  <section class="cta-bottom" id="ctaBottom">
+    <div class="cta-bottom-inner animate-in">
+      <h2>Готовы к выгодной покупке?</h2>
+      <p>Оставьте заявку сейчас — получите персональный расчёт за 15 минут</p>
+      <div class="cta-buttons">
+        <a href="https://wa.me/79612475867?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D1%80%D0%B0%D1%81%D1%81%D1%87%D0%B8%D1%82%D0%B0%D1%82%D1%8C%20%D1%81%D1%82%D0%BE%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C%20%D0%B0%D0%B2%D1%82%D0%BE" class="btn btn-gold" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Написать в WhatsApp
+        </a>
+        <a href="tel:+79612475867" class="btn btn-chrome">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          Позвонить
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-brand">RUSTEAM AUTO</div>
+    <div class="footer-links">
+      <a href="tel:+79612475867" class="footer-link">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        +7 (961) 247-58-67
+      </a>
+      <a href="https://t.me/vivat116" class="footer-link" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        Telegram
+      </a>
+      <a href="https://wa.me/79612475867" class="footer-link" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+    <a href="https://t.me/rusteam_auto" class="footer-channel" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      Наш Telegram-канал
+    </a>
+    <div class="footer-copy">&copy; 2025 RUSTEAM AUTO. Все права защищены.</div>
+  </footer>
+
+  <!-- FLOATING CTA BUTTONS -->
+  <div class="floating-cta" id="floatingCta">
+    <a href="https://wa.me/79612475867?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%A5%D0%BE%D1%87%D1%83%20%D1%83%D0%B7%D0%BD%D0%B0%D1%82%D1%8C%20%D1%81%D1%82%D0%BE%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C%20%D0%B0%D0%B2%D1%82%D0%BE" class="fab fab-wa" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <a href="tel:+79612475867" class="fab fab-call" aria-label="Позвонить">
+      <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+    </a>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    /* ===== Hero Entrance Animations ===== */
+    document.addEventListener('DOMContentLoaded', () => {
+      const tl = [
+        { el: document.getElementById('heroBadge'), delay: 200 },
+        { el: document.getElementById('heroTitle'), delay: 400 },
+        { el: document.getElementById('heroSub'), delay: 700 },
+        { el: document.getElementById('heroCta'), delay: 1000 },
+        { el: document.getElementById('heroStats'), delay: 1300 },
+      ];
+
+      tl.forEach(({ el, delay }) => {
+        if (!el) return;
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0) scale(1)';
+        }, delay);
+      });
+
+      /* ===== Scroll Reveal ===== */
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      document.querySelectorAll('.animate-in').forEach((el) => observer.observe(el));
+
+      /* ===== Floating CTA visibility ===== */
+      const floatingCta = document.getElementById('floatingCta');
+      const heroSection = document.getElementById('hero');
+
+      const floatObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) {
+            floatingCta.classList.add('visible');
+          } else {
+            floatingCta.classList.remove('visible');
+          }
+        },
+        { threshold: 0.3 }
+      );
+
+      floatObserver.observe(heroSection);
+
+      /* ===== Header scroll effect ===== */
+      const header = document.getElementById('header');
+      let lastScroll = 0;
+
+      window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        if (currentScroll > 100) {
+          header.style.background = 'rgba(10, 14, 26, 0.95)';
+        } else {
+          header.style.background = 'rgba(10, 14, 26, 0.85)';
+        }
+        lastScroll = currentScroll;
+      }, { passive: true });
+
+      /* ===== Form Submission → WhatsApp ===== */
+      const calcForm = document.getElementById('calcForm');
+      calcForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const brand = document.getElementById('brand').value.trim();
+        const budget = document.getElementById('budget').value;
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!brand || !budget || !phone) return;
+
+        const message = encodeURIComponent(
+          `Здравствуйте! Хочу рассчитать стоимость авто.\n\n` +
+          `Марка/модель: ${brand}\n` +
+          `Бюджет: ${budget}\n` +
+          `Телефон: ${phone}`
+        );
+
+        window.open(`https://wa.me/79612475867?text=${message}`, '_blank');
+      });
+
+      /* ===== Phone input mask ===== */
+      const phoneInput = document.getElementById('phone');
+      phoneInput.addEventListener('input', (e) => {
+        let val = e.target.value.replace(/\D/g, '');
+        if (val.length > 0) {
+          if (val[0] === '8') val = '7' + val.slice(1);
+          if (val[0] !== '7') val = '7' + val;
+        }
+
+        let formatted = '';
+        if (val.length > 0) formatted += '+' + val[0];
+        if (val.length > 1) formatted += ' (' + val.slice(1, 4);
+        if (val.length > 4) formatted += ') ' + val.slice(4, 7);
+        if (val.length > 7) formatted += '-' + val.slice(7, 9);
+        if (val.length > 9) formatted += '-' + val.slice(9, 11);
+
+        e.target.value = formatted;
+      });
+
+      /* ===== Smooth scroll for anchor links ===== */
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.querySelector(anchor.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
