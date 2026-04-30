@@ -2,6 +2,7 @@
 
 import logging
 import os
+from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 from telegram import Update
@@ -57,10 +58,22 @@ async def handle_car_message(update: Update, context) -> int:
     context.user_data["raw_text"] = text
 
     # Show what was parsed
+    month_names = {
+        1: "январь", 2: "февраль", 3: "март", 4: "апрель",
+        5: "май", 6: "июнь", 7: "июль", 8: "август",
+        9: "сентябрь", 10: "октябрь", 11: "ноябрь", 12: "декабрь",
+    }
+    year_display = "не найден"
+    if car.year:
+        if car.month:
+            year_display = f"{month_names.get(car.month, '')} {car.year}"
+        else:
+            year_display = str(car.year)
+
     parsed_info = (
         f"📋 Распознано:\n"
         f"• Автомобиль: {car.display_name}\n"
-        f"• Год: {car.year if car.year else 'не найден'}\n"
+        f"• Год: {year_display}\n"
         f"• Объём: {car.engine_cc if car.engine_cc else 'не найден'} см³\n"
         f"• Мощность: {car.hp if car.hp > 0 else 'не найдена'} л.с.\n"
         f"• Пробег: {str(car.mileage_km) + ' км' if car.has_mileage else 'не найден'}\n"
@@ -207,6 +220,7 @@ async def handle_vtb_rate_input(update: Update, context) -> int:
 
     car: CarInfo = context.user_data["car"]
 
+    now = datetime.now()
     try:
         result = calculate(
             price_cny=car.price_cny,
@@ -217,6 +231,9 @@ async def handle_vtb_rate_input(update: Update, context) -> int:
             hp=car.hp,
             year=car.year,
             engine_type=car.engine_type,
+            current_year=now.year,
+            month=car.month,
+            current_month=now.month,
         )
     except Exception as e:
         logger.error(f"Calculation error: {e}")

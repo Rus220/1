@@ -104,7 +104,7 @@ class TestFormatTelegramPost:
         assert "✨" not in post
         assert "#RUSTEAMAUTO" not in post
 
-    def test_hashtag_chery(self):
+    def test_no_hashtag_with_brand(self):
         calc = {
             "price_cny": Decimal("100000"), "vtb_rate": Decimal("11.87"),
             "engine_cc": 1500, "hp": Decimal("150"), "year": 2024,
@@ -112,37 +112,7 @@ class TestFormatTelegramPost:
             "mileage_km": 10000, "brand": "Chery",
         }
         post = format_telegram_post(calc, "Chery Tiggo 8 Pro")
-        assert post.endswith("#CHERY")
-
-    def test_hashtag_bmw(self):
-        calc = {
-            "price_cny": Decimal("100000"), "vtb_rate": Decimal("11.87"),
-            "engine_cc": 2000, "hp": Decimal("200"), "year": 2023,
-            "engine_type": "ДВС", "grand_total": Decimal("3000000"),
-            "mileage_km": 30000, "brand": "BMW",
-        }
-        post = format_telegram_post(calc, "BMW X5")
-        assert post.endswith("#BMW")
-
-    def test_hashtag_haval(self):
-        calc = {
-            "price_cny": Decimal("100000"), "vtb_rate": Decimal("11.87"),
-            "engine_cc": 1500, "hp": Decimal("150"), "year": 2024,
-            "engine_type": "ДВС", "grand_total": Decimal("2000000"),
-            "mileage_km": 5000, "brand": "Haval",
-        }
-        post = format_telegram_post(calc, "Haval H6")
-        assert post.endswith("#HAVAL")
-
-    def test_hashtag_geely(self):
-        calc = {
-            "price_cny": Decimal("100000"), "vtb_rate": Decimal("11.87"),
-            "engine_cc": 1500, "hp": Decimal("150"), "year": 2024,
-            "engine_type": "ДВС", "grand_total": Decimal("2000000"),
-            "mileage_km": 0, "brand": "Geely",
-        }
-        post = format_telegram_post(calc, "Geely Monjaro")
-        assert post.endswith("#GEELY")
+        assert "#" not in post
 
     def test_no_hashtag_when_no_brand(self):
         calc = {

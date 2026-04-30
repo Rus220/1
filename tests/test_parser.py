@@ -137,3 +137,158 @@ class TestParser:
         car = parse_car_message(msg)
         assert "🔥" not in car.brand
         assert "🚘" not in car.brand
+
+    # --- Year + month parsing ---
+
+    def test_year_month_dot_format(self):
+        """2023.08 → year=2023, month=8"""
+        msg = """🔥 Honda XR-V— в продаже!
+
+📅Год выпуска: 2023.08
+🛣Пробег: 41 351 км
+
+⚙️Двигатель: 1.5L (124 л.с.)
+
+🚗Тип привода: 2WD
+
+Цена: 80000 юаней"""
+        car = parse_car_message(msg)
+        assert car.year == 2023
+        assert car.month == 8
+        assert car.mileage_km == 41351
+        assert car.engine_cc == 1500
+        assert car.hp == Decimal("124")
+
+    def test_year_month_russian_word(self):
+        """Декабрь 2021 года → year=2021, month=12"""
+        msg = """Volkswagen Tayron 2022 280T 2WD Smart Connect Edition
+Кызов: Кроссоверы
+Объем: 1.4T 150л.с. L4
+Пробег: 54000
+Год выпуска: Декабрь 2021 года
+Цена: 90000 юаней"""
+        car = parse_car_message(msg)
+        assert car.year == 2021
+        assert car.month == 12
+        assert car.brand == "Volkswagen"
+
+    def test_year_only_no_month(self):
+        msg = """Haval H6 2024
+1.5T 150 л.с.
+98000 юаней"""
+        car = parse_car_message(msg)
+        assert car.year == 2024
+        assert car.month == 0
+
+    # --- Engine volume: raw number in двигатель context ---
+
+    def test_engine_cc_raw_1500_in_dvigatel(self):
+        """Двигатель: 1500 (124 л.с.) → 1500cc"""
+        msg = """🔥 Honda XR-V— в продаже!
+
+📅Год выпуска: 2023.08
+🛣Пробег: 41 351 км
+
+⚙️Двигатель: 1500 (124 л.с.)
+
+Цена: 80000 юаней"""
+        car = parse_car_message(msg)
+        assert car.engine_cc == 1500
+        assert car.hp == Decimal("124")
+
+    def test_engine_cc_1_4t(self):
+        """Объем: 1.4T 150л.с. L4 → 1400cc"""
+        msg = """Volkswagen Tayron
+Объем: 1.4T 150л.с. L4
+Пробег: 54000
+2021 г
+Цена: 90000 юаней"""
+        car = parse_car_message(msg)
+        assert car.engine_cc == 1400
+        assert car.hp == Decimal("150")
+
+    def test_engine_cc_1_5l(self):
+        """Двигатель: 1.5L (124 л.с.) → 1500cc"""
+        msg = """⚙️Двигатель: 1.5L (124 л.с.)
+2023 г
+Цена: 80000 юаней"""
+        car = parse_car_message(msg)
+        assert car.engine_cc == 1500
+        assert car.hp == Decimal("124")
+
+    # --- Mileage with spaces ---
+
+    def test_mileage_with_spaces(self):
+        msg = """🛣Пробег: 41 351 км
+2023 г
+1.5T 150 л.с.
+Цена: 80000 юаней"""
+        car = parse_car_message(msg)
+        assert car.mileage_km == 41351
+
+    def test_mileage_without_spaces(self):
+        msg = """Пробег: 54000
+2021 г
+1.4T 150 л.с.
+Цена: 90000 юаней"""
+        car = parse_car_message(msg)
+        assert car.mileage_km == 54000
+
+    # --- Full user messages end-to-end ---
+
+    def test_volkswagen_tayron_full(self):
+        msg = """Volkswagen Tayron 2022 280T 2WD Smart Connect Edition
+Кызов: Кроссоверы
+Объем: 1.4T 150л.с. L4
+Пробег: 54000
+Год выпуска: Декабрь 2021 года
+Цена: 100000 юаней"""
+        car = parse_car_message(msg)
+        assert car.brand == "Volkswagen"
+        assert car.year == 2021
+        assert car.month == 12
+        assert car.engine_cc == 1400
+        assert car.hp == Decimal("150")
+        assert car.mileage_km == 54000
+
+    def test_honda_xrv_emoji_format(self):
+        msg = """🔥 Honda XR-V— в продаже!
+
+📅Год выпуска: 2023.08
+🛣Пробег: 41 351 км
+
+⚙️Двигатель: 1.5L (124 л.с.)
+
+🚗Тип привода: 2WD
+
+🔨Состояние автомобиля: Оригинальная краска
+
+💎 Дополнительные функции: Бесплатный универсальный подогрев.
+
+📋Комплектация: Модель 2023 года, 1.5L CVT Trend Edition
+
+Цена: 80000 юаней"""
+        car = parse_car_message(msg)
+        assert car.brand == "Honda"
+        assert car.year == 2023
+        assert car.month == 8
+        assert car.engine_cc == 1500
+        assert car.hp == Decimal("124")
+        assert car.mileage_km == 41351
+
+    def test_honda_xrv_raw_1500_engine(self):
+        msg = """🔥 Honda XR-V— в продаже!
+
+📅Год выпуска: 2023.08
+🛣Пробег: 41 351 км
+
+⚙️Двигатель: 1500 (124 л.с.)
+
+📋Комплектация: Модель 2023 года, 1500 CVT Trend Edition
+
+Цена: 80000 юаней"""
+        car = parse_car_message(msg)
+        assert car.engine_cc == 1500
+        assert car.hp == Decimal("124")
+        assert car.year == 2023
+        assert car.month == 8

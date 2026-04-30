@@ -224,8 +224,4 @@ def format_telegram_post(calc: dict, car_name: str, bot_username: str = "zakazRU
         f"☎️ Телефон: +79612475867"
     )
 
-    brand = c.get("brand", "")
-    if brand:
-        post += f"\n\n#{brand.upper()}"
-
     return post
