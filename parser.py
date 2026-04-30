@@ -11,6 +11,7 @@ class CarInfo:
     model: str = ""
     trim: str = ""
     year: int = 0
+    month: int = 0
     engine_cc: int = 0
     hp: Decimal = Decimal("0")
     engine_type: str = "ДВС"
@@ -41,7 +42,42 @@ class CarInfo:
         return " ".join(parts) if parts else "Автомобиль"
 
 
-def _extract_year(text: str) -> int:
+RUSSIAN_MONTHS: dict[str, int] = {
+    "январ": 1, "феврал": 2, "март": 3, "апрел": 4,
+    "ма": 5, "июн": 6, "июл": 7, "август": 8,
+    "сентябр": 9, "октябр": 10, "ноябр": 11, "декабр": 12,
+}
+
+
+def _match_russian_month(word: str) -> int:
+    w = word.lower()
+    for stem, num in RUSSIAN_MONTHS.items():
+        if w.startswith(stem):
+            return num
+    return 0
+
+
+def _extract_year_month(text: str) -> tuple[int, int]:
+    """Extract (year, month) from text. month=0 means unknown."""
+    # Format: YYYY.MM (e.g. 2023.08)
+    m = re.search(r'(?:год[а-я]*|выпуск[а-я]*)?[:\s]*(\d{4})\.(\d{1,2})\b', text, re.IGNORECASE)
+    if m:
+        y, mo = int(m.group(1)), int(m.group(2))
+        if 2000 <= y <= 2027 and 1 <= mo <= 12:
+            return y, mo
+
+    # Format: "Месяц YYYY года" (e.g. "Декабрь 2021 года")
+    m = re.search(
+        r'([А-Яа-яЁё]+)\s+(\d{4})\s*(?:г\.?(?:од[а-я]*)?)?',
+        text, re.IGNORECASE,
+    )
+    if m:
+        mo = _match_russian_month(m.group(1))
+        y = int(m.group(2))
+        if mo > 0 and 2000 <= y <= 2027:
+            return y, mo
+
+    # Fallback: just year
     patterns = [
         r'(\d{4})\s*(?:г\.?(?:од)?|year)',
         r'(?:год|year|выпуск)[:\s]*(\d{4})',
@@ -52,14 +88,15 @@ def _extract_year(text: str) -> int:
         if m:
             y = int(m.group(1))
             if 2000 <= y <= 2027:
-                return y
-    return 0
+                return y, 0
+    return 0, 0
 
 
 def _extract_engine_cc(text: str) -> int:
     patterns = [
         r'(\d[\d\s]*)\s*(?:см[³3]|cc|куб)',
         r'(?:объ[её]м|volume|двигатель)[:\s]*(\d[\d\s.,]*)\s*(?:л|l)\b',
+        r'(?:объ[её]м|volume|двигатель)[:\s]*(\d{3,5})\b',
         r'(\d\.\d)\s*(?:л|l|t)\b',
         r'(\d\.\d)T?\b',
     ]
@@ -222,8 +259,8 @@ def _extract_brand_model(text: str) -> tuple[str, str, str]:
 def _extract_mileage(text: str) -> int:
     """Extract mileage in km from text."""
     patterns = [
-        r'(\d[\d\s]*)\s*(?:км|km|\u043a\u0438\u043b\u043e\u043c\u0435\u0442\u0440)',
-        r'(?:\u043f\u0440\u043e\u0431\u0435\u0433|mileage)[:\s]*(\d[\d\s]*)',
+        r'(\d[\d \t\u00a0]*)\s*(?:км|km|\u043a\u0438\u043b\u043e\u043c\u0435\u0442\u0440)',
+        r'(?:\u043f\u0440\u043e\u0431\u0435\u0433|mileage)[:\s]*(\d[\d \t\u00a0]*)',
     ]
     for pat in patterns:
         m = re.search(pat, text, re.IGNORECASE)
@@ -240,11 +277,13 @@ def _extract_mileage(text: str) -> int:
 def parse_car_message(text: str) -> CarInfo:
     """Parse a forwarded supplier message and extract car information."""
     brand, model, trim = _extract_brand_model(text)
+    year, month = _extract_year_month(text)
     return CarInfo(
         brand=brand,
         model=model,
         trim=trim,
-        year=_extract_year(text),
+        year=year,
+        month=month,
         engine_cc=_extract_engine_cc(text),
         hp=_extract_hp(text),
         engine_type=_extract_engine_type(text),

@@ -47,6 +47,30 @@ class TestAgeCategory:
     def test_future_car(self):
         assert _get_car_age_category(2027, 2026) == "0-3"
 
+    def test_month_precise_under_3_years(self):
+        # Dec 2023 -> Apr 2026 = 2 years 4 months -> "0-3"
+        assert _get_car_age_category(2023, 2026, month=12, current_month=4) == "0-3"
+
+    def test_month_precise_exactly_3_years(self):
+        # Apr 2023 -> Apr 2026 = exactly 3 years -> "0-3"
+        assert _get_car_age_category(2023, 2026, month=4, current_month=4) == "0-3"
+
+    def test_month_precise_over_3_years(self):
+        # Mar 2023 -> Apr 2026 = 3 years 1 month -> "3-5"
+        assert _get_car_age_category(2023, 2026, month=3, current_month=4) == "3-5"
+
+    def test_month_precise_dec_2021_apr_2026(self):
+        # Dec 2021 -> Apr 2026 = 4 years 4 months -> "3-5"
+        assert _get_car_age_category(2021, 2026, month=12, current_month=4) == "3-5"
+
+    def test_month_precise_aug_2023_apr_2026(self):
+        # Aug 2023 -> Apr 2026 = 2 years 8 months -> "0-3"
+        assert _get_car_age_category(2023, 2026, month=8, current_month=4) == "0-3"
+
+    def test_month_zero_falls_back_to_year(self):
+        # month=0 -> fallback to year-only
+        assert _get_car_age_category(2022, 2026, month=0, current_month=4) == "3-5"
+
 
 # ---------------------------------------------------------------------------
 # Duty 0-3 years
