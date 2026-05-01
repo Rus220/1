@@ -94,7 +94,7 @@ def _extract_year_month(text: str) -> tuple[int, int]:
 
 def _extract_engine_cc(text: str) -> int:
     patterns = [
-        r'(\d[\d\s]*)\s*(?:см[³3]|cc|куб)',
+        r'(?:\(|^|\s)(\d{3,5})\s*(?:см[³3]?|cc|куб)',
         r'(?:объ[её]м|volume|двигатель)[:\s]*(\d[\d\s.,]*)\s*(?:л|l)\b',
         r'(?:объ[её]м|volume|двигатель)[:\s]*(\d{3,5})\b',
         r'(\d\.\d)\s*(?:л|l|t)\b',
@@ -151,12 +151,39 @@ def _extract_price_cny(text: str) -> Decimal:
 
 def _extract_engine_type(text: str) -> str:
     text_lower = text.lower()
-    if any(w in text_lower for w in ["электро", "ev", "electric", "bev"]):
-        return "EV"
-    if any(w in text_lower for w in ["гибрид", "hybrid", "phev", "hev"]):
-        return "ГИБРИД"
-    if any(w in text_lower for w in ["дизель", "diesel"]):
+
+    # Explicit ICE turbo indicators — highest priority
+    if any(w in text_lower for w in ["tfsi", "tsi", "turbo", "турбо", "gdi",
+                                      "t-gdi", "tgdi", "mpi", "cvvl", "fsi"]):
+        return "ДВС"
+    # Diesel indicators
+    if any(w in text_lower for w in ["tdi", "cdi", "crdi", "d4d", "dci",
+                                      "hdi", "jtd", "cdti",
+                                      "дизель", "дизельный", "diesel"]):
         return "ДИЗЕЛЬ"
+    # Plug-in hybrid (check before generic hybrid)
+    if any(w in text_lower for w in ["phev", "plug-in",
+                                      "плагин-гибрид", "подключаемый гибрид"]):
+        return "ГИБРИД"
+    # Generic hybrid
+    if any(w in text_lower for w in ["гибрид", "гибридный", "hybrid", "hev", "mhev"]):
+        return "ГИБРИД"
+    # EV indicators — use word boundaries for short tokens and
+    # require "электро" only as standalone or in EV-specific compounds,
+    # NOT in generic "электро-" prefixed feature words like
+    # "электропривод", "электрозеркала", "электрическая".
+    _ev_compounds = ["электромобиль", "электрокар", "электродвигатель",
+                     "электротяга", "электроавто"]
+    if any(w in text_lower for w in _ev_compounds):
+        return "EV"
+    if any(w in text_lower for w in ["electric", "bev"]):
+        return "EV"
+    # "электро" as standalone word (not part of a longer compound)
+    if re.search(r'(?<!\S)электро(?!\S)', text_lower):
+        return "EV"
+    # "ev" with word boundaries to avoid matching inside words
+    if re.search(r'\bev\b', text_lower):
+        return "EV"
     return "ДВС"
 
 
