@@ -307,6 +307,10 @@ def main() -> None:
     app.add_handler(CommandHandler("start", start))
     app.add_handler(conv_handler)
 
+    # Start health-check HTTP server for Render free-tier
+    from health import start_health_server
+    start_health_server(port=int(os.environ.get("PORT", 10000)))
+
     logger.info("Bot started")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 
