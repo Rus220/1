@@ -277,6 +277,10 @@ async def cancel(update: Update, context) -> int:
 
 
 def main() -> None:
+    # Start health-check HTTP server immediately for Render free-tier
+    from health import start_health_server
+    start_health_server(port=int(os.environ.get("PORT", 10000)))
+
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     if not token:
         raise RuntimeError("TELEGRAM_BOT_TOKEN environment variable is not set")
@@ -306,10 +310,6 @@ def main() -> None:
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(conv_handler)
-
-    # Start health-check HTTP server for Render free-tier
-    from health import start_health_server
-    start_health_server(port=int(os.environ.get("PORT", 10000)))
 
     logger.info("Bot started")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
