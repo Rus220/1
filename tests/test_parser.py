@@ -292,3 +292,88 @@ class TestParser:
         assert car.hp == Decimal("124")
         assert car.year == 2023
         assert car.month == 8
+
+    # --- Bug fix: TFSI not detected as EV, displacement "см" without ³ ---
+
+    def test_audi_q2l_tfsi_not_ev(self):
+        """TFSI must be detected as ДВС, not EV. '1400 см' must parse."""
+        msg = (
+            "🔥 Audi Q2L\n"
+            "2022 год\n"
+            "| 35 TFSI 时尚致雅型\n"
+            "Пробег: 12 000 км (реальный, гарантия) — почти новый!\n"
+            "Кузов: полностью оригинальная краска, все болты родные\n"
+            "Ключи: 2 комплекта\n"
+            "Страховка: до августа\n"
+            "Опции: люк, бесключевой доступ, кнопка запуска, подрулевые лепестки, "
+            "мультируль, большой экран навигации, камера заднего вида, "
+            "электрозеркала (обогрев, складывание), голосовое управление, CarPlay, "
+            "парктроники, электропривод сиденья, кожаные сиденья, подогрев сидений, "
+            "автоклимат (раздельные зоны), активное торможение, датчик давления в шинах, "
+            "предупреждение о фронтальном столкновении, LED‑ходовые огни, помощь при "
+            "подъёме, автозапуск/стоп, автопарковка, электрическая крышка багажника, "
+            "круиз-контроль.\n"
+            "🚗 Состояние — как новый!\n"
+            "💰 Цена до Уссурийска: 134 800 ¥\n\n"
+            "1400 см\n"
+            "150л.с"
+        )
+        car = parse_car_message(msg)
+        assert car.brand == "Audi"
+        assert car.year == 2022
+        assert car.engine_cc == 1400
+        assert car.hp == Decimal("150")
+        assert car.mileage_km == 12000
+        assert car.engine_type == "ДВС"
+        assert car.price_cny > 0
+
+    def test_engine_type_tfsi_is_dvs(self):
+        """TFSI keyword must result in ДВС, not EV."""
+        msg = "Audi A3 35 TFSI 2023 1400 см³ 150 л.с. 120000 юаней"
+        car = parse_car_message(msg)
+        assert car.engine_type == "ДВС"
+
+    def test_engine_type_tsi_is_dvs(self):
+        msg = "Volkswagen Golf 2023 TSI 1400 см³ 150 л.с. 100000 юаней"
+        car = parse_car_message(msg)
+        assert car.engine_type == "ДВС"
+
+    def test_engine_type_tdi_is_diesel(self):
+        msg = "Audi Q5 2021 TDI 2000 см³ 190 л.с. 200000 юаней"
+        car = parse_car_message(msg)
+        assert car.engine_type == "ДИЗЕЛЬ"
+
+    def test_elektroprivod_not_ev(self):
+        """'электропривод' and 'электрозеркала' must NOT trigger EV."""
+        msg = (
+            "BMW 320i 2022\n"
+            "2000 см³ 184 л.с.\n"
+            "Опции: электропривод сиденья, электрозеркала\n"
+            "Цена: 180000 юаней"
+        )
+        car = parse_car_message(msg)
+        assert car.engine_type == "ДВС"
+
+    def test_elektromobil_is_ev(self):
+        """'электромобиль' must still trigger EV."""
+        msg = "BYD Han 2024 электромобиль 517 л.с. 250000 юаней"
+        car = parse_car_message(msg)
+        assert car.engine_type == "EV"
+
+    def test_elektro_standalone_is_ev(self):
+        """Standalone word 'электро' must trigger EV."""
+        msg = "BYD Seal 2024 электро 200000 юаней"
+        car = parse_car_message(msg)
+        assert car.engine_type == "EV"
+
+    def test_displacement_plain_sm(self):
+        """'1400 см' (without ³) must parse as 1400cc."""
+        msg = "BMW 320i 2022 1400 см 150 л.с. 100000 юаней"
+        car = parse_car_message(msg)
+        assert car.engine_cc == 1400
+
+    def test_displacement_sm3_superscript(self):
+        """'1400 см³' must still parse as 1400cc."""
+        msg = "BMW 320i 2022 1400 см³ 150 л.с. 100000 юаней"
+        car = parse_car_message(msg)
+        assert car.engine_cc == 1400
